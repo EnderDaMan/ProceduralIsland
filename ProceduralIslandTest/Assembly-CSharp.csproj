@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\NoahCunkManager.cs" />
+     <Compile Include="Assets\Scripts\TerrainProc.cs" />
      <Compile Include="Assets\Scripts\ChunkManager.cs" />
      <Folder Include="Assets" />
      <Folder Include="Assets\Scripts\Shaders" />

@@ -27,27 +27,32 @@ public class NoahChunkManager : MonoBehaviour
 
     private void Start()
     {
+        //islandRadius = Random.Range(islandRadius - 100, islandRadius + 100);
         worldCenter = new Vector2((worldSize.x / 2f) * chunkSize, (worldSize.y / 2f) * chunkSize);
         StartCoroutine(GenerateChunks());
     }
 
     IEnumerator GenerateChunks()
     {
-        for(int x = 0; x < worldSize.x; x++)
-            for(int y = 0; y < worldSize.y; y++)
-            {
-                TerrainGenerator tg = new();
+        for (int x = 0; x < worldSize.x; x++)
+        for (int y = 0; y < worldSize.y; y++)
+        {
+            TerrainGenerator tg = new();
 
-                GameObject current = new GameObject("Terrain" + (x * y), typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
-                current.transform.parent = transform;
-                current.transform.localPosition = new Vector3(x * chunkSize, 0f ,y * chunkSize);
+            GameObject current = new GameObject("Terrain" + (x * y), typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
+            current.transform.parent = transform;
+            current.transform.localPosition = new Vector3(x * chunkSize, 0f, y * chunkSize);
 
-                //Initialize and generate terrain
-                tg.Init(current);
-                tg.Generate(material);
+            // Random seed for each terrain chunk
+            tg.randomSeed = Random.Range(0.005f, 0.01f);
+    
+            Debug.Log(tg.randomSeed);
+            // Initialize and generate terrain
+            tg.Init(current);
+            tg.Generate(material);
 
-                yield return new WaitForSeconds(0.1f);
-            }
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     class TerrainGenerator
@@ -56,8 +61,8 @@ public class NoahChunkManager : MonoBehaviour
         MeshRenderer renderer;
         MeshCollider collider;
         Mesh mesh;
+        public float randomSeed;  // Add this field
 
-        float randomSeed;
 
         Vector3[] vertices;
         int[] triangles;
@@ -70,9 +75,11 @@ public class NoahChunkManager : MonoBehaviour
             mesh = new();
         }
 
+        
+
         public void Generate(Material mat)
         {
-            Vector2 worldPosition =  new Vector2(filter.gameObject.transform.localPosition.x, filter.gameObject.transform.localPosition.z);
+            Vector2 worldPosition = new Vector2(filter.gameObject.transform.localPosition.x, filter.gameObject.transform.localPosition.z);
             int resolution = NoahChunkManager.instance.resolution;
 
             vertices = new Vector3[(resolution + 1) * (resolution + 1)];
@@ -81,23 +88,25 @@ public class NoahChunkManager : MonoBehaviour
             Vector2 worldCenter = NoahChunkManager.instance.worldCenter;
 
             float distance;
+            
 
-            //randomSeed = Random.Range(0.005f, 0.01f);
-            //System.Math.Round(randomSeed, 3);
+
+
             for(int i = 0, x = 0; x <= resolution; x++)
             {
                 for(int z = 0; z <= resolution; z++)
                 {
-                    Vector2 vertexWorldPos = new Vector2(worldPosition.x + (x * NoahChunkManager.instance.chunkSize / resolution), worldPosition.y + (z * NoahChunkManager.instance.chunkSize / resolution));
+                    Vector2 vertexWorldPos = new Vector2(worldPosition.x + (x * ChunkManager.instance.chunkSize / resolution), worldPosition.y + (z * ChunkManager.instance.chunkSize / resolution));
                     distance = Vector2.Distance(worldCenter, vertexWorldPos);
-                    float islandRadius = NoahChunkManager.instance.islandRadius;
+                    float islandRadius = ChunkManager.instance.islandRadius;
 
-                    float islandMultiplier = Mathf.Sin(Mathf.Clamp(((1 + distance) / islandRadius), 0f, 1f) + 90f) * Mathf.PerlinNoise(vertexWorldPos.x * 0.01f, vertexWorldPos.y * 0.01f);
+                    float islandMultiplier = Mathf.Sin(Mathf.Clamp(((1 + distance) / islandRadius), 0f, 1f) + 90) * Mathf.PerlinNoise(vertexWorldPos.x * 0.01f, vertexWorldPos.y * 0.01f);
 
-                    vertices[i] = new Vector3(x * (NoahChunkManager.instance.chunkSize / resolution), islandMultiplier * 150, z * (NoahChunkManager.instance.chunkSize / resolution));
+                    vertices[i] = new Vector3(x * (ChunkManager.instance.chunkSize / resolution), islandMultiplier * 150, z * (ChunkManager.instance.chunkSize / resolution));
                     i++;
                 }
             }
+
 
 
 
