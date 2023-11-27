@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -387,7 +387,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1019946358}
-  - component: {fileID: 1019946359}
+  - component: {fileID: 1019946361}
   - component: {fileID: 1019946360}
   m_Layer: 0
   m_Name: ChunkManager
@@ -411,7 +411,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1019946359
+--- !u!114 &1019946360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -420,16 +420,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1019946356}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b593e33dc6624ef449990c49d4c6b8b5, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c145d0366acf1149ab0ef35eb644ac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   worldSize: {x: 8, y: 8}
-  resolution: 128
+  resolution: 16
   chunkSize: 128
   material: {fileID: 2100000, guid: 045b7778e1364064d88c97b588fd9eea, type: 2}
-  islandRadius: 500
+  islandRadius: 256
+  trees:
+  - {fileID: 117604, guid: 9469bb1d3aa88ca40aa4079e96a27f8e, type: 3}
+  - {fileID: 151190, guid: a9cc5585b9634a9449920c03ec6bc243, type: 3}
+  - {fileID: 112728, guid: 069e1e44b643edc4fb4a9d4311a78fb7, type: 3}
   worldCenter: {x: 512, y: 512}
---- !u!114 &1019946360
+--- !u!114 &1019946361
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -438,15 +442,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1019946356}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c145d0366acf1149ab0ef35eb644ac8, type: 3}
+  m_Script: {fileID: 11500000, guid: b593e33dc6624ef449990c49d4c6b8b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   worldSize: {x: 500, y: 500}
   resolution: 128
   chunkSize: 128
   material: {fileID: 2100000, guid: 045b7778e1364064d88c97b588fd9eea, type: 2}
-  islandRadius: 256
-  worldCenter: {x: 512, y: 512}
+  islandRadius: 500
+  worldCenter: {x: 0, y: 0}
 --- !u!1 &1462332360
 GameObject:
   m_ObjectHideFlags: 0

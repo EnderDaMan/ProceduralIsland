@@ -1,3 +1,4 @@
+//https://www.youtube.com/watch?v=bd4P5suj-L0
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,13 +9,19 @@ public class ChunkManager : MonoBehaviour
     public static ChunkManager instance;
     public Vector2 worldSize;
     public int resolution = 16;
-    public float chunkSize = 128f; 
+    public float chunkSize = 128f;
+
+    static public Vector2 startPosition = new Vector2(-111,-111);
+    static public Vector2 endPosition;
+    static public float beachHeight = 30;
     
 
     [SerializeField]
     public Material material;
     [SerializeField]
     public float islandRadius = 900f;
+    [SerializeField]
+    List<GameObject> trees;
 
     public Vector2 worldCenter;
 
@@ -33,21 +40,23 @@ public class ChunkManager : MonoBehaviour
 
     IEnumerator GenerateChunks()
     {
-        for(int x = 0; x < worldSize.x; x++)
+        TerrainGenerator tg = new();
+        for (int x = 0; x < worldSize.x; x++)
             for(int y = 0; y < worldSize.y; y++)
             {
-                TerrainGenerator tg = new();
-
                 GameObject current = new GameObject("Terrain" + (x * y), typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
+                current.layer = LayerMask.NameToLayer("Default");
                 current.transform.parent = transform;
                 current.transform.localPosition = new Vector3(x * chunkSize, 0f ,y * chunkSize);
 
                 //Initialize and generate terrain
                 tg.Init(current);
-                tg.Generate(material);
+                tg.Generate(material); 
 
                 yield return new WaitForSeconds(0.1f);
             }
+
+        tg.AddTrees(trees);
     }
 
     class TerrainGenerator
@@ -73,6 +82,10 @@ public class ChunkManager : MonoBehaviour
         public void Generate(Material mat)
         {
             Vector2 worldPosition =  new Vector2(filter.gameObject.transform.localPosition.x, filter.gameObject.transform.localPosition.z);
+            if(ChunkManager.startPosition == new Vector2(-111, -111))
+                ChunkManager.startPosition = worldPosition;
+
+            ChunkManager.endPosition = worldPosition;
             int resolution = ChunkManager.instance.resolution;
 
             vertices = new Vector3[(resolution + 1) * (resolution + 1)];
@@ -137,6 +150,34 @@ public class ChunkManager : MonoBehaviour
             filter.mesh = mesh;
             renderer.material = mat;
         }
+        public void AddTrees(List<GameObject> trees)
+        {
+            Bounds bounds = renderer.bounds;
+            float castHeight = bounds.max.y + 1000;
+            Vector3 rayPos;
+
+            for (float x = 0; x < ChunkManager.endPosition.x; x++)
+            {
+                for (float z = 0; z < ChunkManager.endPosition.y; z++)
+                {
+                    if (Random.Range(1, 75) == 1)
+                    {
+                        GameObject objToSpawn = trees[Random.Range(0, trees.Count)];
+
+                        rayPos = new Vector3(x, castHeight, z);
+                        RaycastHit hit;
+
+                        if (Physics.Raycast(rayPos, Vector3.down, out hit, Mathf.Infinity, LayerMask.NameToLayer("Ground")))
+                        {
+                            Debug.Log(hit.transform.gameObject.tag);
+                            if(hit.point.y > beachHeight)
+                                Instantiate(objToSpawn, hit.point, Quaternion.identity);
+                        }
+                    }
+                }
+            }
+        }
     }
+    
 
 }
